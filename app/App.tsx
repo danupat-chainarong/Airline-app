@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { initializeApp } from 'firebase/app';
-import {EXPO_PUBLIC_API_KEY} from '@env';
-const apiKey = process.env.EXPO_PUBLIC_API_KEY;
+import {API_KEY,test} from '@env';
+
 
 const firebaseConfig = {
   // Add your own Firebase configuration
-  apiKey: apiKey,
+  apiKey: API_KEY,
   authDomain: "flight-app-mobile-app-project.firebaseapp.com",
   databaseURL: "https://flight-app-mobile-app-project-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "flight-app-mobile-app-project",
@@ -23,7 +23,7 @@ initializeApp(firebaseConfig);
 const App: React.FC = () => {
   // ADD usefull func
   console.log("test");
-  console.log(EXPO_PUBLIC_API_KEY);
+  console.log(API_KEY,test);
   return (
     <View style={styles.container}>
       <Text>Open up App.tsx to start working on your app!</Text>
