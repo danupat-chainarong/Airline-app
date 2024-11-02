@@ -34,3 +34,4 @@ app/.env
 
 # typescript
 app/*.tsbuildinfo
+app/.env
