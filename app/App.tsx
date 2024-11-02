@@ -147,6 +147,7 @@ const ListScreen: React.FC = () => {
   );
 }
 
+// ADD Detailed for Detailed Screen here
 const DetailScreen: React.FC = () =>{
   const route = useRoute<RouteProp<RootStackParamList, 'Details'>>();
   const {flightName} = route.params;
@@ -166,7 +167,7 @@ const App: React.FC = () => {
           name="Lists"
           component={ListScreen}
           options={{
-            title: 'Movie Explorer',
+            title: 'Airline Booking',
             headerStyle: {
               backgroundColor: 'darkred',
             },
@@ -180,7 +181,7 @@ const App: React.FC = () => {
           name="Details"
           component={DetailScreen}
           options={{
-            title: 'Movie Explorer',
+            title: 'Airline Details',
             headerStyle: {
               backgroundColor: 'darkred',
             },
