@@ -14,7 +14,20 @@ import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 type RootStackParamList = {
   Home: undefined; // LOGIN PAGE
   Lists: undefined;
-  Details: { flightName: string};
+  Details: {  
+    flight_num: string,
+    ori_name: string,
+    ori_short: string,
+    start_date: Date,
+    // start_time: TimeRanges,
+    dest_name: string,
+    dest_short: string,
+    arrive_date: Date,
+    // arrive_time: TimeRanges,
+    carrier: string,
+    carrier_full: string,
+    price: Float,
+  };
   User: undefined;
 };
 
@@ -67,8 +80,8 @@ const Flight: React.FC<FlightProps> = ({
     <View style={styles.flight}>
       <Text style={{fontSize: 20}}>Flight Num: {flight_num}</Text>
       <Text style={{fontSize: 12}}>From {ori_short} to {dest_short}</Text>
-      <Text style={{fontSize: 12}}>{start_date}</Text>
-      <Text style={{fontSize: 15, color:"green"}}>Price: {price} Baths</Text>
+      {/* <Text style={{fontSize: 12}}>{start_date}</Text> */}
+      <Text style={{fontSize: 15, color:"green"}}>Price: {price.toFixed(2)} Baths</Text>
     </View>
 
   );
@@ -160,6 +173,9 @@ const mockUsers: UserProps[] =
 
 const LoginScreen: React.FC =() => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Home'>>();
+  const [username, setUsername] = useState('');
+  const [error, setError] = useState('');
+
   return (
     <View style = {styles.container}>
        <TouchableHighlight style={styles.container} onPress={() => {
@@ -223,7 +239,17 @@ const ListScreen: React.FC = () => {
         {flightData?.map((flight_data, i) => (
           <TouchableHighlight onPress={() => {
             navigation.navigate('Details', {
-              flightName: flight_data.flightName,
+              key : flight_data.flight_num,
+              flight_num : flight_data.flight_num,
+              ori_name : flight_data.ori_name,
+              ori_short : flight_data.ori_short,
+              start_date : flight_data.start_date,
+              dest_name : flight_data.dest_name,
+              dest_short : flight_data.dest_short,
+              arrive_date : flight_data.arrive_date,
+              carrier : flight_data.carrier,
+              carrier_full : flight_data.carrier_full,
+              price : flight_data.price,
             });
           }}>
             <Flight
