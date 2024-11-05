@@ -8,6 +8,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
+import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 
 // Define types for navigation parameters
 type RootStackParamList = {
@@ -34,15 +35,42 @@ initializeApp(firebaseConfig);
 //FLIGHT
 type FlightProps = {
   // Add attribute of flight
-  flightName: string,
-
+  flight_num: string,
+  ori_name: string,
+  ori_short: string,
+  start_date: Date,
+  // start_time: TimeRanges,
+  dest_name: string,
+  dest_short: string,
+  arrive_date: Date,
+  // arrive_time: TimeRanges,
+  carrier: string,
+  carrier_full: string,
+  price: Float,
 }
 
 const Flight: React.FC<FlightProps> = ({
-  flightName,
+  flight_num,
+  ori_name,
+  ori_short,
+  start_date,
+  // start_time: TimeRanges,
+  dest_name,
+  dest_short,
+  arrive_date,
+  // arrive_time: TimeRanges,
+  carrier,
+  carrier_full,
+  price,
 }) => {
   return (
-    <Text style={{fontSize: 20}}>Flight NAME: {flightName}</Text>
+    <View style={styles.flight}>
+      <Text style={{fontSize: 20}}>Flight Num: {flight_num}</Text>
+      <Text style={{fontSize: 12}}>From {ori_short} to {dest_short}</Text>
+      <Text style={{fontSize: 12}}>{start_date}</Text>
+      <Text style={{fontSize: 15, color:"green"}}>Price: {price} Baths</Text>
+    </View>
+
   );
 }
 
@@ -63,16 +91,85 @@ const User: React.FC<UserProps> = ({
 
 // MOCK DATA
 const mockFlights: FlightProps[] =
-  [ {flightName: "flight 1"},
-    {flightName: "flight 2"},
-    {flightName: "flight 3"},
+  [
+    {
+      "flight_num": "0001",
+      "ori_name": "Berlin",
+      "ori_short": "BER",
+      "start_date": new Date("22/11/2024T11:15:00"),
+      "dest_name": "Bangkok",
+      "dest_short": "BKK",
+      "arrive_date": new Date("23/11/2024T8:05:00"),
+      "carrier": "ECHO",
+      "carrier_full": "EchoFlights",
+      "price": 24020.00
+    },
+    {
+      "flight_num": "0002",
+      "ori_name": "Berlin",
+      "ori_short": "BER",
+      "start_date": new Date("22/11/2024T15:30:00"),
+      "dest_name": "Bangkok",
+      "dest_short": "BKK",
+      "arrive_date": new Date("23/11/2024T15:20:00"),
+      "carrier": "ECHO",
+      "carrier_full": "EchoFlights",
+      "price": 24980.00
+    },
+    {
+      "flight_num": "0003",
+      "ori_name": "Berlin",
+      "ori_short": "BER",
+      "start_date": new Date("22/11/2024T6:15:00"),
+      "dest_name": "Bangkok",
+      "dest_short": "BKK",
+      "arrive_date": new Date("23/11/2024T21:40:00"),
+      "carrier": "AERO",
+      "carrier_full": "AeroJet",
+      "price": 26730.00
+    },
+    {
+      "flight_num": "0004",
+      "ori_name": "Bangkok",
+      "ori_short": "BKK",
+      "start_date": new Date("22/11/2024T7:50:00"),
+      "dest_name": "Berlin",
+      "dest_short": "BER",
+      "arrive_date": new Date("23/11/2024T18:25:00"),
+      "carrier": "VIVA",
+      "carrier_full": "VivaJet",
+      "price": 30000.00
+    },
+    {
+      "flight_num": "0005",
+      "ori_name": "Bangkok",
+      "ori_short": "BKK",
+      "start_date": new Date("22/11/2024T18:50:00"),
+      "dest_name": "Berlin",
+      "dest_short": "BER",
+      "arrive_date": new Date("23/11/2024T6:55:00"),
+      "carrier": "SKY",
+      "carrier_full": "SkyConnect",
+      "price": 23430.00
+    }
   ]
-
 const mockUsers: UserProps[] =
   [ {name: "User 1"},
     {name: "User 2"},
   ]
 
+const LoginScreen: React.FC =() => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Home'>>();
+  return (
+    <View style = {styles.container}>
+       <TouchableHighlight style={styles.container} onPress={() => {
+            navigation.navigate('Lists');
+          }}>
+        <Text>LOGIN</Text>
+      </TouchableHighlight>
+    </View>
+  )
+}
 
 const ListScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Lists'>>();
@@ -122,12 +219,6 @@ const ListScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-      {userData?.map((user_data, i) => (
-        <User name={user_data.name}/>
-      ))}
-      
       <ScrollView style={{ flex: 1 }}>
         {flightData?.map((flight_data, i) => (
           <TouchableHighlight onPress={() => {
@@ -136,8 +227,17 @@ const ListScreen: React.FC = () => {
             });
           }}>
             <Flight
-              key={i}
-              flightName={flight_data.flightName}
+              key={flight_data.flight_num}
+              flight_num={flight_data.flight_num}
+              ori_name= {flight_data.ori_name}
+              ori_short= {flight_data.ori_short}
+              start_date= {flight_data.start_date}
+              dest_name= {flight_data.dest_name}
+              dest_short= {flight_data.dest_short}
+              arrive_date= {flight_data.arrive_date}
+              carrier= {flight_data.carrier}
+              carrier_full= {flight_data.carrier_full}
+              price= {flight_data.price}
             />
           </TouchableHighlight>
           
@@ -162,7 +262,21 @@ const Stack = createStackNavigator<RootStackParamList>();
 const App: React.FC = () => {
   return(
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Lists">
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen
+          name="Home"
+          component={LoginScreen}
+          options={{
+            title: 'Login',
+            headerStyle: {
+              backgroundColor: 'darkred',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
         <Stack.Screen
           name="Lists"
           component={ListScreen}
@@ -204,5 +318,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },  
+  flight: {
+    padding: 5,
+    margin: 5,
+    backgroundColor: '#FFFFFF',
   },
 });
