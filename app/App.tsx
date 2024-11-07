@@ -84,7 +84,7 @@ const Flight: React.FC<FlightProps> = ({
       <View style={{flex:3}}>
         <Image source={{uri : carrier_img}} style={styles.flight_logo}/>
       </View>
-      <View style={{alignContent:"center",justifyContent: 'center', flex:4,}}>
+      <View style={{flex:4,}}>
         <Text style={{fontSize: 20}}>Flight Num: {flight_num}</Text>
         <Text style={{fontSize: 12}}>From {ori_short} to {dest_short}</Text>
         <Text style={{fontSize: 12}}>From {start_date} {start_time}</Text>
@@ -518,6 +518,8 @@ const ListScreen: React.FC = () => {
   const [flightData, setFlightData] = useState<any[] | null>(mockFlights);
   const [userData, setUserData] = useState<any[] | null>(mockUsers);
   const [searchText, setSearchText] = useState<string>('');
+  const [searchResult, setSearchResult] = useState<any[] | null>(null);
+  const [isSearch, setIsSearch] = useState<boolean>(false);
 
   const flightRef = ref(getDatabase(), 'flight/');
   const userRef = ref(getDatabase(), 'user/');
@@ -557,21 +559,25 @@ const ListScreen: React.FC = () => {
       });
   }
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.searchArea}>
-        <TextInput
-          style={{ height: 25, fontSize: 20, flex: 5}}
-          placeholder="Search"
-          onChangeText={(text) => setSearchText(text)}
-        />
-        <TouchableHighlight onPress={() => {console.log("search text is",searchText)}} underlayColor="white">
-          <View style={[styles.searchButton,{flex: 1}]}>
-            <Image style={{ height: 30, width: 30 }} source={require('./images/search_icon.png')} />
-          </View>
-        </TouchableHighlight>
-      </View>
-      <View style={styles.flightContainer}>
+  const _onPressSearch = () => {
+    if (flightData && searchText!='') {
+      const flightFound = flightData.filter((flight) =>
+        flight.ori_name.match(new RegExp(searchText, 'i'))
+      );
+
+      setSearchResult(flightFound);
+      setIsSearch(true);
+      console.log("Pressed Search: ", searchText)
+      console.log("searchResult: ", searchResult)
+    }
+    else {
+      console.log("No search text!")
+      setIsSearch(false);
+    }
+  }
+
+  const showDefault = () => {
+    return(
         <ScrollView style={{ flex: 1 }}>
           {flightData?.map((flight_data, i) => (
             <TouchableHighlight onPress={() => {
@@ -609,9 +615,76 @@ const ListScreen: React.FC = () => {
                 carrier_img= {flight_data.carrier_img}
               />
             </TouchableHighlight>
-            
           ))}
         </ScrollView>
+    );
+  }
+
+  const showSearchResult = () => {
+    if (searchResult && searchResult.length > 0) {
+      return (
+        <ScrollView style={{ flex: 1 }}>
+          {searchResult?.map((flight_data, i) => (
+            <TouchableHighlight onPress={() => {
+              navigation.navigate('Details', {
+                key : flight_data.flight_num,
+                flight_num : flight_data.flight_num,
+                ori_name : flight_data.ori_name,
+                ori_short : flight_data.ori_short,
+                start_date : flight_data.start_date,
+                start_time: flight_data.start_time,
+                dest_name : flight_data.dest_name,
+                dest_short : flight_data.dest_short,
+                arrive_date : flight_data.arrive_date,
+                arrive_time: flight_data.arrive_time,
+                carrier : flight_data.carrier,
+                carrier_full : flight_data.carrier_full,
+                price : flight_data.price,
+                carrier_img: flight_data.carrier_img,
+              });
+            }}>
+              <Flight
+                key={flight_data.flight_num}
+                flight_num={flight_data.flight_num}
+                ori_name= {flight_data.ori_name}
+                ori_short= {flight_data.ori_short}
+                start_date= {flight_data.start_date}
+                start_time= {flight_data.start_time}
+                dest_name= {flight_data.dest_name}
+                dest_short= {flight_data.dest_short}
+                arrive_date= {flight_data.arrive_date}
+                arrive_time= {flight_data.arrive_time}
+                carrier= {flight_data.carrier}
+                carrier_full= {flight_data.carrier_full}
+                price= {flight_data.price}
+                carrier_img= {flight_data.carrier_img}
+              />
+            </TouchableHighlight>
+          ))}
+        </ScrollView>
+      );
+    } else {
+      console.log("No Flight Found!")
+      return <Text>No restaurant found</Text>;
+    }
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.searchArea}>
+        <TextInput
+          style={{ height: 25, fontSize: 20, flex: 5}}
+          placeholder="Search"
+          onChangeText={(text) => setSearchText(text)}
+        />
+        <TouchableHighlight onPress={_onPressSearch} underlayColor="white">
+          <View style={[styles.searchButton,{flex: 1}]}>
+            <Image style={{ height: 30, width: 30 }} source={require('./images/search_icon.png')} />
+          </View>
+        </TouchableHighlight>
+      </View>
+      <View style={styles.flightContainer}>
+        {isSearch ? showSearchResult() : showDefault()}
       </View>
     </View>
   );
@@ -635,7 +708,7 @@ const DetailScreen: React.FC = () =>{
     carrier_img,} = route.params;
 
   return (
-    <View style={{flexDirection: "column"}}>
+    <View style={{flexDirection: "column",flex:1,justifyContent: 'flex-start',}}>
       <View style={{flex:3}}>
       <Text>This is Detail for {flight_num}</Text>
       <Text>That have ori_short = {ori_short}</Text>
@@ -650,7 +723,7 @@ const DetailScreen: React.FC = () =>{
       <Text>That have price = {price}</Text>
       </View>
       <View style={{flex:5}}>
-      <Image source={{uri : carrier_img}}/>
+      <Image source={{uri : carrier_img}} style={{width:300,height:300}}/>
       </View>
     </View>
   )
@@ -733,6 +806,7 @@ const styles = StyleSheet.create({
     padding: 5,
     margin: 5,
     backgroundColor: '#FFFFFF',
+    
   },
   flightContainer: {
     padding: 5,
