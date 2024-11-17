@@ -82,7 +82,7 @@ const Flight: React.FC<FlightProps> = ({
   return (
     <View style={styles.flight}>
       <View style={{flex:3}}>
-        <Image source={{uri : carrier_img}} style={styles.flight_logo}/>
+        <Image source={{uri : carrier_img}} style={styles.FlightLogo}/>
       </View>
       <View style={{flex:4,}}>
         <Text style={{fontSize: 20}}>Flight Num: {flight_num}</Text>
@@ -495,13 +495,39 @@ const mockUsers: UserProps[] =
     {name: "User 2"},
   ]
 
+  
 const LoginScreen: React.FC =() => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Home'>>();
   const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  const handleLoginInputChange = (type: string, value: string) => {
+    if (type == "username") {
+      setUsername(value);
+      console.log("Username:\t",value)
+    }
+    else if (type == "password") {
+      setPassword(value);
+      console.log("Password:\t",value);
+    }
+  }
 
   return (
     <View style = {styles.container}>
+      <TextInput></TextInput>
+      <TextInput
+        style={styles.LoginInput}
+        placeholder="Username"
+        value={username}
+        onChangeText={(username) => handleLoginInputChange("username",username)}
+      />
+      <TextInput
+      style={styles.LoginInput}
+      placeholder='Password'
+      value={password}
+      onChangeText={(password) => handleLoginInputChange("password",password)}
+      />
        <TouchableHighlight underlayColor="red" onPress={() => {
             navigation.navigate('Lists');
           }}>
@@ -815,9 +841,18 @@ const styles = StyleSheet.create({
     // width: 350,
     flex: 1,
   },
-  flight_logo: {
+  FlightLogo: {
     width: 100,
     height: 100,
     margin: 3,
+  },
+  LoginInput: {
+    width: '100%',
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingLeft: 10,
+    borderRadius: 5,
   },
 });
