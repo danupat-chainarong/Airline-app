@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, TouchableHighlight, Image, TextInput } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableHighlight, Image, TextInput, Button } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, get } from 'firebase/database';
 import {API_KEY} from '@env';
@@ -12,7 +12,8 @@ import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 
 // Define types for navigation parameters
 type RootStackParamList = {
-  Home: undefined; // LOGIN PAGE
+  Signup: undefined; //
+  Login: undefined; // LOGIN PAGE
   Lists: undefined;
   Details: {  
     flight_num: string,
@@ -495,9 +496,76 @@ const mockUsers: UserProps[] =
     {name: "User 2"},
   ]
 
+const SignupScreen: React.FC =() => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Login'>>();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [re_password,setRe_Password] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSignupInputChange = (type: string, value: string) => {
+    if (type == "username") {
+      setUsername(value);
+      console.log("Username:\t",value)
+    }
+    else if (type == "password") {
+      setPassword(value);
+      console.log("Password:\t",value);
+    }
+    else if (type == "re-password") {
+      setRe_Password(value);
+      console.log("Re-Password:\t",value);
+    }
+  }
+
+  const handleButton = () => {
+    if (password == re_password) {
+      console.log("Signup with");
+      console.log("username: ",username);
+      console.log("password: ",password);
+      navigation.navigate('Login');
+    }
+    else{
+      console.log("Password not match!!")
+    }
+
+  }
+
+  return (
+    <View style = {styles.container}>
+      <TextInput></TextInput>
+      <TextInput
+        style={styles.Input}
+        placeholder="Username"
+        value={username}
+        onChangeText={(username) => handleSignupInputChange("username",username)}
+      />
+      <TextInput
+        style={styles.Input}
+        placeholder='Password'
+        value={password}
+        secureTextEntry={true}
+        onChangeText={(password) => handleSignupInputChange("password",password)}
+      />
+      <TextInput
+        style={styles.Input}
+        placeholder='Re-Password'
+        value={re_password}
+        secureTextEntry={true}
+        onChangeText={(re_password) => handleSignupInputChange("re-password",re_password)}
+      />
+      <Button
+      onPress={handleButton}
+      title="Signup"
+      color="#841584"
+      />
+      <Text onPress={() => {navigation.navigate("Login")}} style={{fontSize:12}}>Already have an account? Login</Text>
+    </View>
+  )
+}
   
 const LoginScreen: React.FC =() => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Home'>>();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Login'>>();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -513,29 +581,40 @@ const LoginScreen: React.FC =() => {
     }
   }
 
+  const handleLoginButton = () => {
+    console.log("Login with");
+    console.log("username: ",username);
+    console.log("password: ",password);
+    navigation.navigate('Lists');
+  }
+
   return (
     <View style = {styles.container}>
       <TextInput></TextInput>
       <TextInput
-        style={styles.LoginInput}
+        style={styles.Input}
         placeholder="Username"
         value={username}
         onChangeText={(username) => handleLoginInputChange("username",username)}
       />
       <TextInput
-      style={styles.LoginInput}
+      style={styles.Input}
       placeholder='Password'
       value={password}
+      secureTextEntry={true}
       onChangeText={(password) => handleLoginInputChange("password",password)}
       />
-       <TouchableHighlight underlayColor="red" onPress={() => {
-            navigation.navigate('Lists');
-          }}>
-        <Text>LOGIN</Text>
-      </TouchableHighlight>
+      <Button
+      onPress={handleLoginButton}
+      title="LOGIN"
+      color="#841584"
+    />
     </View>
   )
 }
+
+
+
 
 const ListScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Lists'>>();
@@ -606,9 +685,8 @@ const ListScreen: React.FC = () => {
     return(
         <ScrollView style={{ flex: 1 }}>
           {flightData?.map((flight_data, i) => (
-            <TouchableHighlight onPress={() => {
+            <TouchableHighlight key={i} onPress={() => {
               navigation.navigate('Details', {
-                key : flight_data.flight_num,
                 flight_num : flight_data.flight_num,
                 ori_name : flight_data.ori_name,
                 ori_short : flight_data.ori_short,
@@ -653,7 +731,7 @@ const ListScreen: React.FC = () => {
           {searchResult?.map((flight_data, i) => (
             <TouchableHighlight onPress={() => {
               navigation.navigate('Details', {
-                key : flight_data.flight_num,
+                
                 flight_num : flight_data.flight_num,
                 ori_name : flight_data.ori_name,
                 ori_short : flight_data.ori_short,
@@ -760,9 +838,23 @@ const Stack = createStackNavigator<RootStackParamList>();
 const App: React.FC = () => {
   return(
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Signup">
+       <Stack.Screen
+          name="Signup"
+          component={SignupScreen}
+          options={{
+            title: 'Signup',
+            headerStyle: {
+              backgroundColor: 'darkred',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
         <Stack.Screen
-          name="Home"
+          name="Login"
           component={LoginScreen}
           options={{
             title: 'Login',
@@ -846,7 +938,7 @@ const styles = StyleSheet.create({
     height: 100,
     margin: 3,
   },
-  LoginInput: {
+  Input: {
     width: '100%',
     height: 40,
     borderColor: '#ccc',
