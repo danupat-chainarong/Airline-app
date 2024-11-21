@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ScrollView, TouchableHighlight, Image, TextInput, Button } from 'react-native';
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, get } from 'firebase/database';
+import { getDatabase, ref, get, push, set, query, orderByChild, equalTo } from 'firebase/database';
 import {API_KEY} from '@env';
 import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
+import { format } from "date-fns";
 
 // Define types for navigation parameters
 type RootStackParamList = {
@@ -100,401 +101,23 @@ const Flight: React.FC<FlightProps> = ({
 // USER
 type UserProps = {
   // Add attribute of User
-  name: string,
+  username: string,
+  password: string,
+  flight: FlightProps[],
 }
 
 const User: React.FC<UserProps> = ({
-  name,
+  username,
+  password,
+  flight
 }) => {
   return (
-    <Text style={{fontSize: 20}}>User NAME: {name}</Text>
+    <Text style={{fontSize: 20}}>User NAME: {username}</Text>
   );
 }
 
-
-// MOCK DATA
-const mockFlights: FlightProps[] =
-  [
-    {
-      "flight_num": "0001",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "11:15:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "08:05:00",
-      "carrier": "ECHO",
-      "carrier_full": "EchoFlights",
-      "price": 24020.,
-      "carrier_img": "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png/v1/fill/w_260,h_260,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png",
-    },
-    {
-      "flight_num": "0002",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "15:30:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "15:20:00",
-      "carrier": "ECHO",
-      "carrier_full": "EchoFlights",
-      "price": 24980.00,
-      "carrier_img": "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png/v1/fill/w_260,h_260,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png",
-    },
-    {
-      "flight_num": "0003",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "06:15:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "21:40:00",
-      "carrier": "AERO",
-      "carrier_full": "AeroJet",
-      "price": 26730.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcLaymGS7-NZgW4OOKUx5JWju-VMG-9IYa6g&s",
-    },
-    {
-      "flight_num": "0004",
-      "ori_name": "Bangkok",
-      "ori_short": "BKK",
-      "start_date": "22/11/2024",
-      "start_time": "07:50:00",
-      "dest_name": "Berlin",
-      "dest_short": "BER",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "18:25:00",
-      "carrier": "VIVA",
-      "carrier_full": "VivaJet",
-      "price": 30000.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT027QfI-XwewbsLZyLXM6iSI2KDJsU63HanA&s",
-    },
-    {
-      "flight_num": "0005",
-      "ori_name": "Bangkok",
-      "ori_short": "BKK",
-      "start_date": "22/11/2024T",
-      "start_time": "18:50:00",
-      "dest_name": "Berlin",
-      "dest_short": "BER",
-      "arrive_date": "23/11/2024T",
-      "arrive_time": "06:55:00",
-      "carrier": "SKY",
-      "carrier_full": "SkyConnect",
-      "price": 23430.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI14Su5QybSPs6dxoQa1QXBuPXvmD-06C8AA&s",
-    },
-    {
-      "flight_num": "0006",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "11:15:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "08:05:00",
-      "carrier": "ECHO",
-      "carrier_full": "EchoFlights",
-      "price": 24020.,
-      "carrier_img": "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png/v1/fill/w_260,h_260,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png",
-    },
-    {
-      "flight_num": "0007",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "15:30:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "15:20:00",
-      "carrier": "ECHO",
-      "carrier_full": "EchoFlights",
-      "price": 24980.00,
-      "carrier_img": "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png/v1/fill/w_260,h_260,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png",
-    },
-    {
-      "flight_num": "0008",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "06:15:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "21:40:00",
-      "carrier": "AERO",
-      "carrier_full": "AeroJet",
-      "price": 26730.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcLaymGS7-NZgW4OOKUx5JWju-VMG-9IYa6g&s",
-    },
-    {
-      "flight_num": "0009",
-      "ori_name": "Bangkok",
-      "ori_short": "BKK",
-      "start_date": "22/11/2024",
-      "start_time": "07:50:00",
-      "dest_name": "Berlin",
-      "dest_short": "BER",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "18:25:00",
-      "carrier": "VIVA",
-      "carrier_full": "VivaJet",
-      "price": 30000.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT027QfI-XwewbsLZyLXM6iSI2KDJsU63HanA&s",
-    },
-    {
-      "flight_num": "0010",
-      "ori_name": "Bangkok",
-      "ori_short": "BKK",
-      "start_date": "22/11/2024T",
-      "start_time": "18:50:00",
-      "dest_name": "Berlin",
-      "dest_short": "BER",
-      "arrive_date": "23/11/2024T",
-      "arrive_time": "06:55:00",
-      "carrier": "SKY",
-      "carrier_full": "SkyConnect",
-      "price": 23430.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI14Su5QybSPs6dxoQa1QXBuPXvmD-06C8AA&s",
-    },
-    {
-      "flight_num": "0011",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "11:15:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "08:05:00",
-      "carrier": "ECHO",
-      "carrier_full": "EchoFlights",
-      "price": 24020.,
-      "carrier_img": "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png/v1/fill/w_260,h_260,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png",
-    },
-    {
-      "flight_num": "0012",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "15:30:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "15:20:00",
-      "carrier": "ECHO",
-      "carrier_full": "EchoFlights",
-      "price": 24980.00,
-      "carrier_img": "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png/v1/fill/w_260,h_260,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png",
-    },
-    {
-      "flight_num": "0013",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "06:15:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "21:40:00",
-      "carrier": "AERO",
-      "carrier_full": "AeroJet",
-      "price": 26730.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcLaymGS7-NZgW4OOKUx5JWju-VMG-9IYa6g&s",
-    },
-    {
-      "flight_num": "0014",
-      "ori_name": "Bangkok",
-      "ori_short": "BKK",
-      "start_date": "22/11/2024",
-      "start_time": "07:50:00",
-      "dest_name": "Berlin",
-      "dest_short": "BER",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "18:25:00",
-      "carrier": "VIVA",
-      "carrier_full": "VivaJet",
-      "price": 30000.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT027QfI-XwewbsLZyLXM6iSI2KDJsU63HanA&s",
-    },
-    {
-      "flight_num": "0015",
-      "ori_name": "Bangkok",
-      "ori_short": "BKK",
-      "start_date": "22/11/2024T",
-      "start_time": "18:50:00",
-      "dest_name": "Berlin",
-      "dest_short": "BER",
-      "arrive_date": "23/11/2024T",
-      "arrive_time": "06:55:00",
-      "carrier": "SKY",
-      "carrier_full": "SkyConnect",
-      "price": 23430.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI14Su5QybSPs6dxoQa1QXBuPXvmD-06C8AA&s",
-    },
-    {
-      "flight_num": "0016",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "11:15:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "08:05:00",
-      "carrier": "ECHO",
-      "carrier_full": "EchoFlights",
-      "price": 24020.,
-      "carrier_img": "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png/v1/fill/w_260,h_260,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png",
-    },
-    {
-      "flight_num": "0017",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "15:30:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "15:20:00",
-      "carrier": "ECHO",
-      "carrier_full": "EchoFlights",
-      "price": 24980.00,
-      "carrier_img": "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png/v1/fill/w_260,h_260,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png",
-    },
-    {
-      "flight_num": "0018",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "06:15:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "21:40:00",
-      "carrier": "AERO",
-      "carrier_full": "AeroJet",
-      "price": 26730.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcLaymGS7-NZgW4OOKUx5JWju-VMG-9IYa6g&s",
-    },
-    {
-      "flight_num": "0019",
-      "ori_name": "Bangkok",
-      "ori_short": "BKK",
-      "start_date": "22/11/2024",
-      "start_time": "07:50:00",
-      "dest_name": "Berlin",
-      "dest_short": "BER",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "18:25:00",
-      "carrier": "VIVA",
-      "carrier_full": "VivaJet",
-      "price": 30000.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT027QfI-XwewbsLZyLXM6iSI2KDJsU63HanA&s",
-    },
-    {
-      "flight_num": "0020",
-      "ori_name": "Bangkok",
-      "ori_short": "BKK",
-      "start_date": "22/11/2024T",
-      "start_time": "18:50:00",
-      "dest_name": "Berlin",
-      "dest_short": "BER",
-      "arrive_date": "23/11/2024T",
-      "arrive_time": "06:55:00",
-      "carrier": "SKY",
-      "carrier_full": "SkyConnect",
-      "price": 23430.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI14Su5QybSPs6dxoQa1QXBuPXvmD-06C8AA&s",
-    },
-    {
-      "flight_num": "0021",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "11:15:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "08:05:00",
-      "carrier": "ECHO",
-      "carrier_full": "EchoFlights",
-      "price": 24020.,
-      "carrier_img": "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png/v1/fill/w_260,h_260,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png",
-    },
-    {
-      "flight_num": "0022",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "15:30:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "15:20:00",
-      "carrier": "ECHO",
-      "carrier_full": "EchoFlights",
-      "price": 24980.00,
-      "carrier_img": "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png/v1/fill/w_260,h_260,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png",
-    },
-    {
-      "flight_num": "0023",
-      "ori_name": "Berlin",
-      "ori_short": "BER",
-      "start_date": "22/11/2024",
-      "start_time": "06:15:00",
-      "dest_name": "Bangkok",
-      "dest_short": "BKK",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "21:40:00",
-      "carrier": "AERO",
-      "carrier_full": "AeroJet",
-      "price": 26730.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcLaymGS7-NZgW4OOKUx5JWju-VMG-9IYa6g&s",
-    },
-    {
-      "flight_num": "0024",
-      "ori_name": "Bangkok",
-      "ori_short": "BKK",
-      "start_date": "22/11/2024",
-      "start_time": "07:50:00",
-      "dest_name": "Berlin",
-      "dest_short": "BER",
-      "arrive_date": "23/11/2024",
-      "arrive_time": "18:25:00",
-      "carrier": "VIVA",
-      "carrier_full": "VivaJet",
-      "price": 30000.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT027QfI-XwewbsLZyLXM6iSI2KDJsU63HanA&s",
-    },
-    {
-      "flight_num": "0025",
-      "ori_name": "Bangkok",
-      "ori_short": "BKK",
-      "start_date": "22/11/2024T",
-      "start_time": "18:50:00",
-      "dest_name": "Berlin",
-      "dest_short": "BER",
-      "arrive_date": "23/11/2024T",
-      "arrive_time": "06:55:00",
-      "carrier": "SKY",
-      "carrier_full": "SkyConnect",
-      "price": 23430.00,
-      "carrier_img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI14Su5QybSPs6dxoQa1QXBuPXvmD-06C8AA&s",
-    }
-  ]
-const mockUsers: UserProps[] =
-  [ {name: "User 1"},
-    {name: "User 2"},
-  ]
+const flightRef = ref(getDatabase(), 'flight/');
+const userRef = ref(getDatabase(), 'user/');
 
 const SignupScreen: React.FC =() => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Login'>>();
@@ -523,6 +146,14 @@ const SignupScreen: React.FC =() => {
       console.log("Signup with");
       console.log("username: ",username);
       console.log("password: ",password);
+      const newUserRef = push(userRef);
+
+      set(newUserRef, {
+        username:username,
+        password:password,
+        flight: []
+      })
+      console.log(newUserRef)
       navigation.navigate('Login');
     }
     else{
@@ -533,7 +164,6 @@ const SignupScreen: React.FC =() => {
 
   return (
     <View style = {styles.container}>
-      <TextInput></TextInput>
       <TextInput
         style={styles.Input}
         placeholder="Username"
@@ -559,96 +189,27 @@ const SignupScreen: React.FC =() => {
       title="Signup"
       color="#841584"
       />
-      <Text onPress={() => {navigation.navigate("Login")}} style={{fontSize:12}}>Already have an account? Login</Text>
+      <Text onPress={() => {navigation.navigate("Login")}} style={{fontSize:15,color:"blue"}}>Already have an account? Login</Text>
     </View>
   )
 }
-  
+let userID: string;
+
 const LoginScreen: React.FC =() => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Login'>>();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [userData, setUserData] = useState<any[] | null>();
+  // const [userID,setUserID] = useState('');
   const [error, setError] = useState('');
 
-  const handleLoginInputChange = (type: string, value: string) => {
-    if (type == "username") {
-      setUsername(value);
-      console.log("Username:\t",value)
-    }
-    else if (type == "password") {
-      setPassword(value);
-      console.log("Password:\t",value);
-    }
-  }
+  const [flightData, setFlightData] = useState<any[] | null>();
 
-  const handleLoginButton = () => {
-    console.log("Login with");
-    console.log("username: ",username);
-    console.log("password: ",password);
-    navigation.navigate('Lists');
-  }
-
-  return (
-    <View style = {styles.container}>
-      <TextInput></TextInput>
-      <TextInput
-        style={styles.Input}
-        placeholder="Username"
-        value={username}
-        onChangeText={(username) => handleLoginInputChange("username",username)}
-      />
-      <TextInput
-      style={styles.Input}
-      placeholder='Password'
-      value={password}
-      secureTextEntry={true}
-      onChangeText={(password) => handleLoginInputChange("password",password)}
-      />
-      <Button
-      onPress={handleLoginButton}
-      title="LOGIN"
-      color="#841584"
-    />
-    </View>
-  )
-}
-
-
-
-
-const ListScreen: React.FC = () => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Lists'>>();
-
-  // Add more constant and state
-  const [flightData, setFlightData] = useState<any[] | null>(mockFlights);
-  const [userData, setUserData] = useState<any[] | null>(mockUsers);
-  const [searchText, setSearchText] = useState<string>('');
-  const [searchResult, setSearchResult] = useState<any[] | null>(null);
-  const [isSearch, setIsSearch] = useState<boolean>(false);
-
-  const flightRef = ref(getDatabase(), 'flight/');
-  const userRef = ref(getDatabase(), 'user/');
   
-  // useEffect(() => {
-  //   _readFlightDB();
-  //   _readUserDB();
-  // })
+  useEffect(() => {
+    _readUserDB();
+  })
 
-  // ADD usefull func
-  const _readFlightDB = () => {
-    get(flightRef)
-      .then((flight_snapshot) => {
-        if (flight_snapshot.exists()) {
-          setFlightData(flight_snapshot.val());
-          // console.log("Flight from DB:",flight_snapshot.val());
-        } else {
-          console.log('No Flight Data in DB');
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
   const _readUserDB = () => {
     get(userRef)
       .then((user_snapshot) => {
@@ -664,135 +225,421 @@ const ListScreen: React.FC = () => {
       });
   }
 
+  const handleLoginInputChange = (type: string, value: string) => {
+    if (type == "username") {
+      setUsername(value);
+      console.log("Username:\t",value)
+    }
+    else if (type == "password") {
+      setPassword(value);
+      console.log("Password:\t",value);
+    }
+  }
+
+  const handleButton = () => {
+    console.log("Login with");
+    console.log("username: ",username);
+    console.log("password: ",password);
+    console.log(userData);
+    if (userData && username!='') {
+      const userFound = Object.entries(userData).filter(([key, value]) => {
+        return value.username == username; 
+      }
+      );
+      console.log("userFound", userFound);
+      if (userFound) {
+        const correct_pass = userFound[0][1]['password'];
+        if (correct_pass == password) {
+          console.log("Correct password!");
+          userID = userFound[0][0];
+          console.log("UserID",userID);
+          navigation.navigate('Lists');
+        }else{
+          console.log("Incorrect Pass!!!")
+        }
+      } else{
+        console.log("Username is incorrect")
+      }
+    }
+    else {
+      console.log("Username is blank")
+    }
+  }
+
+  return (
+    <View style = {styles.container}>
+      <TextInput
+        style={styles.Input}
+        placeholder="Username"
+        value={username}
+        onChangeText={(username) => handleLoginInputChange("username",username)}
+      />
+      <TextInput
+      style={styles.Input}
+      placeholder='Password'
+      value={password}
+      secureTextEntry={true}
+      onChangeText={(password) => handleLoginInputChange("password",password)}
+      />
+      <Button
+      onPress={handleButton}
+      title="LOGIN"
+      color="#841584"
+    />
+    </View>
+  )
+}
+
+const ListScreen: React.FC = () => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Lists'>>();
+  const [flightData, setFlightData] = useState<any[] | null>(null);
+  const [searchText, setSearchText] = useState<string>('');
+  const [searchResult, setSearchResult] = useState<any[] | null>(null);
+  const [isSearch, setIsSearch] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);  // To manage loading state
+
+  // Fetch flight data from Firebase when the component mounts
+  useEffect(() => {
+    _readFlightDB();
+  }, []);  // Empty dependency array ensures it runs only once when the component mounts
+
+  const _readFlightDB = () => {
+    setLoading(true);  // Set loading to true when starting the data fetch
+    get(flightRef)
+      .then((flight_snapshot) => {
+        if (flight_snapshot.exists()) {
+          setFlightData(flight_snapshot.val());
+          console.log("Flight from DB:", flight_snapshot.val());
+        } else {
+          console.log('No Flight Data in DB');
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);  // Set loading to false after data is fetched
+      });
+  };
+
   const _onPressSearch = () => {
-    if (flightData && searchText!='') {
+    if (flightData && searchText !== '') {
       const flightFound = flightData.filter((flight) =>
         flight.ori_name.match(new RegExp(searchText, 'i'))
       );
 
       setSearchResult(flightFound);
       setIsSearch(true);
-      console.log("Pressed Search: ", searchText)
-      console.log("searchResult: ", searchResult)
-    }
-    else {
-      console.log("No search text!")
+      console.log("Pressed Search: ", searchText);
+    } else {
+      console.log("No search text!");
       setIsSearch(false);
     }
-  }
+  };
 
-  const showDefault = () => {
-    return(
-        <ScrollView style={{ flex: 1 }}>
-          {flightData?.map((flight_data, i) => (
-            <TouchableHighlight key={i} onPress={() => {
+  const showToday = () => {
+    console.log("Showing Today")
+    let today: Date = new Date();
+    const targetDate = format(new Date(), "dd/MM/yyyy");
+    console.log("TODAY:",targetDate);
+    if (!flightData) {
+      return <Text>No flight data available</Text>;
+    }
+
+    const todayFlightData = flightData.filter((flight) => {
+      console.log(flight.start_date)
+      return flight.start_date==targetDate
+    });
+    console.log("todayFlightData", todayFlightData);
+
+    return (
+      <ScrollView style={{ flex: 1 }}>
+        {todayFlightData?.map((flight_data, i) => (
+          <TouchableHighlight
+            key={i}
+            onPress={() => {
               navigation.navigate('Details', {
-                flight_num : flight_data.flight_num,
-                ori_name : flight_data.ori_name,
-                ori_short : flight_data.ori_short,
-                start_date : flight_data.start_date,
+                flight_num: flight_data.flight_num,
+                ori_name: flight_data.ori_name,
+                ori_short: flight_data.ori_short,
+                start_date: flight_data.start_date,
                 start_time: flight_data.start_time,
-                dest_name : flight_data.dest_name,
-                dest_short : flight_data.dest_short,
-                arrive_date : flight_data.arrive_date,
+                dest_name: flight_data.dest_name,
+                dest_short: flight_data.dest_short,
+                arrive_date: flight_data.arrive_date,
                 arrive_time: flight_data.arrive_time,
-                carrier : flight_data.carrier,
-                carrier_full : flight_data.carrier_full,
-                price : flight_data.price,
+                carrier: flight_data.carrier,
+                carrier_full: flight_data.carrier_full,
+                price: flight_data.price,
                 carrier_img: flight_data.carrier_img,
               });
             }}>
-              <Flight
-                key={flight_data.flight_num}
-                flight_num={flight_data.flight_num}
-                ori_name= {flight_data.ori_name}
-                ori_short= {flight_data.ori_short}
-                start_date= {flight_data.start_date}
-                start_time= {flight_data.start_time}
-                dest_name= {flight_data.dest_name}
-                dest_short= {flight_data.dest_short}
-                arrive_date= {flight_data.arrive_date}
-                arrive_time= {flight_data.arrive_time}
-                carrier= {flight_data.carrier}
-                carrier_full= {flight_data.carrier_full}
-                price= {flight_data.price}
-                carrier_img= {flight_data.carrier_img}
-              />
-            </TouchableHighlight>
-          ))}
-        </ScrollView>
+            <Flight
+              flight_num={flight_data.flight_num}
+              ori_name={flight_data.ori_name}
+              ori_short={flight_data.ori_short}
+              start_date={flight_data.start_date}
+              start_time={flight_data.start_time}
+              dest_name={flight_data.dest_name}
+              dest_short={flight_data.dest_short}
+              arrive_date={flight_data.arrive_date}
+              arrive_time={flight_data.arrive_time}
+              carrier={flight_data.carrier}
+              carrier_full={flight_data.carrier_full}
+              price={flight_data.price}
+              carrier_img={flight_data.carrier_img}
+            />
+          </TouchableHighlight>
+        ))}
+      </ScrollView>
     );
-  }
+  };
 
   const showSearchResult = () => {
     if (searchResult && searchResult.length > 0) {
       return (
         <ScrollView style={{ flex: 1 }}>
-          {searchResult?.map((flight_data, i) => (
-            <TouchableHighlight onPress={() => {
+          {searchResult.map((flight_data, i) => (
+            <TouchableHighlight key={i} onPress={() => {
               navigation.navigate('Details', {
-                
-                flight_num : flight_data.flight_num,
-                ori_name : flight_data.ori_name,
-                ori_short : flight_data.ori_short,
-                start_date : flight_data.start_date,
+                flight_num: flight_data.flight_num,
+                ori_name: flight_data.ori_name,
+                ori_short: flight_data.ori_short,
+                start_date: flight_data.start_date,
                 start_time: flight_data.start_time,
-                dest_name : flight_data.dest_name,
-                dest_short : flight_data.dest_short,
-                arrive_date : flight_data.arrive_date,
+                dest_name: flight_data.dest_name,
+                dest_short: flight_data.dest_short,
+                arrive_date: flight_data.arrive_date,
                 arrive_time: flight_data.arrive_time,
-                carrier : flight_data.carrier,
-                carrier_full : flight_data.carrier_full,
-                price : flight_data.price,
+                carrier: flight_data.carrier,
+                carrier_full: flight_data.carrier_full,
+                price: flight_data.price,
                 carrier_img: flight_data.carrier_img,
               });
             }}>
               <Flight
-                key={flight_data.flight_num}
                 flight_num={flight_data.flight_num}
-                ori_name= {flight_data.ori_name}
-                ori_short= {flight_data.ori_short}
-                start_date= {flight_data.start_date}
-                start_time= {flight_data.start_time}
-                dest_name= {flight_data.dest_name}
-                dest_short= {flight_data.dest_short}
-                arrive_date= {flight_data.arrive_date}
-                arrive_time= {flight_data.arrive_time}
-                carrier= {flight_data.carrier}
-                carrier_full= {flight_data.carrier_full}
-                price= {flight_data.price}
-                carrier_img= {flight_data.carrier_img}
+                ori_name={flight_data.ori_name}
+                ori_short={flight_data.ori_short}
+                start_date={flight_data.start_date}
+                start_time={flight_data.start_time}
+                dest_name={flight_data.dest_name}
+                dest_short={flight_data.dest_short}
+                arrive_date={flight_data.arrive_date}
+                arrive_time={flight_data.arrive_time}
+                carrier={flight_data.carrier}
+                carrier_full={flight_data.carrier_full}
+                price={flight_data.price}
+                carrier_img={flight_data.carrier_img}
               />
             </TouchableHighlight>
           ))}
         </ScrollView>
       );
     } else {
-      console.log("No Flight Found!")
-      return <Text>No restaurant found</Text>;
+      console.log("No Flight Found!");
+      return <Text>No flight found</Text>;
     }
+  };
+
+  // If the data is still loading, show a loading message
+  if (loading) {
+    console.log("Loading flights...");
+    return <Text>Loading flights...</Text>;
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.searchArea}>
         <TextInput
-          style={{ height: 25, fontSize: 20, flex: 5}}
+          style={{ height: 25, fontSize: 20, flex: 5 }}
           placeholder="Search"
           onChangeText={(text) => setSearchText(text)}
         />
         <TouchableHighlight onPress={_onPressSearch} underlayColor="white">
-          <View style={[styles.searchButton,{flex: 1}]}>
+          <View style={[styles.searchButton, { flex: 1 }]}>
             <Image style={{ height: 30, width: 30 }} source={require('./images/search_icon.png')} />
           </View>
         </TouchableHighlight>
       </View>
       <View style={styles.flightContainer}>
-        {isSearch ? showSearchResult() : showDefault()}
+        {isSearch ? showSearchResult() : showToday()}
       </View>
     </View>
   );
-}
+};
+
+// const ListScreen: React.FC = () => {
+//   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Lists'>>();
+//   const [flightData, setFlightData] = useState<any[] | null>();
+//   const [searchText, setSearchText] = useState<string>('');
+//   const [searchResult, setSearchResult] = useState<any[] | null>(null);
+//   const [isSearch, setIsSearch] = useState<boolean>(false);
+//   const [loading, setLoading] = useState(true);  // To manage loading state
+
+  
+//   useEffect(() => {
+//     _readFlightDB();
+//   })
+
+//   // ADD usefull func
+//   const _readFlightDB = () => {
+//     get(flightRef)
+//       .then((flight_snapshot) => {
+//         if (flight_snapshot.exists()) {
+//           setFlightData(flight_snapshot.val());
+//           console.log("Flight from DB:",flight_snapshot.val());
+//         } else {
+//           console.log('No Flight Data in DB');
+//         }
+//       })
+//       .catch((error) => {
+//         console.log(error);
+//       })
+//       .finally(() => {
+//         setLoading(false);  // Set loading to false once data is fetched
+//       });
+//   }
+
+//   const _onPressSearch = () => {
+//     if (flightData && searchText!='') {
+//       const flightFound = flightData.filter((flight) =>
+//         flight.ori_name.match(new RegExp(searchText, 'i'))
+//       );
+
+//       setSearchResult(flightFound);
+//       setIsSearch(true);
+//       console.log("Pressed Search: ", searchText)
+//       console.log("searchResult: ", searchResult)
+//     }
+//     else {
+//       console.log("No search text!")
+//       setIsSearch(false);
+//     }
+//   }
+
+//   const showDefault = () => {
+//     // _readFlightDB();
+//     const targetDate = "23/11/2024";
+//     // console.log("flightData",flightData);
+//     if (flightData) {
+//       const todayFlightData = flightData.filter(flight => flight.start_date === targetDate);
+//       console.log("todayFlightData",todayFlightData);
+//     }
+    
+//     return(
+//         <ScrollView style={{ flex: 1 }}>
+//           {todayFlightData?.map((flight_data, i) => (
+//             <TouchableHighlight key={i} onPress={() => {
+//               navigation.navigate('Details', {
+//                 flight_num : flight_data.flight_num,
+//                 ori_name : flight_data.ori_name,
+//                 ori_short : flight_data.ori_short,
+//                 start_date : flight_data.start_date,
+//                 start_time: flight_data.start_time,
+//                 dest_name : flight_data.dest_name,
+//                 dest_short : flight_data.dest_short,
+//                 arrive_date : flight_data.arrive_date,
+//                 arrive_time: flight_data.arrive_time,
+//                 carrier : flight_data.carrier,
+//                 carrier_full : flight_data.carrier_full,
+//                 price : flight_data.price,
+//                 carrier_img: flight_data.carrier_img,
+//               });
+//             }}>
+//               <Flight
+//                 key={flight_data.flight_num}
+//                 flight_num={flight_data.flight_num}
+//                 ori_name= {flight_data.ori_name}
+//                 ori_short= {flight_data.ori_short}
+//                 start_date= {flight_data.start_date}
+//                 start_time= {flight_data.start_time}
+//                 dest_name= {flight_data.dest_name}
+//                 dest_short= {flight_data.dest_short}
+//                 arrive_date= {flight_data.arrive_date}
+//                 arrive_time= {flight_data.arrive_time}
+//                 carrier= {flight_data.carrier}
+//                 carrier_full= {flight_data.carrier_full}
+//                 price= {flight_data.price}
+//                 carrier_img= {flight_data.carrier_img}
+//               />
+//             </TouchableHighlight>
+//           ))}
+//         </ScrollView>
+//     );
+//   }
+//   if (loading) {
+//     return <Text>Loading flights...</Text>;
+//   }
+//   const showSearchResult = () => {
+//     if (searchResult && searchResult.length > 0) {
+//       return (
+//         <ScrollView style={{ flex: 1 }}>
+//           {searchResult?.map((flight_data, i) => (
+//             <TouchableHighlight onPress={() => {
+//               navigation.navigate('Details', {
+
+//                 flight_num : flight_data.flight_num,
+//                 ori_name : flight_data.ori_name,
+//                 ori_short : flight_data.ori_short,
+//                 start_date : flight_data.start_date,
+//                 start_time: flight_data.start_time,
+//                 dest_name : flight_data.dest_name,
+//                 dest_short : flight_data.dest_short,
+//                 arrive_date : flight_data.arrive_date,
+//                 arrive_time: flight_data.arrive_time,
+//                 carrier : flight_data.carrier,
+//                 carrier_full : flight_data.carrier_full,
+//                 price : flight_data.price,
+//                 carrier_img: flight_data.carrier_img,
+//               });
+//             }}>
+//               <Flight
+//                 key={flight_data.flight_num}
+//                 flight_num={flight_data.flight_num}
+//                 ori_name= {flight_data.ori_name}
+//                 ori_short= {flight_data.ori_short}
+//                 start_date= {flight_data.start_date}
+//                 start_time= {flight_data.start_time}
+//                 dest_name= {flight_data.dest_name}
+//                 dest_short= {flight_data.dest_short}
+//                 arrive_date= {flight_data.arrive_date}
+//                 arrive_time= {flight_data.arrive_time}
+//                 carrier= {flight_data.carrier}
+//                 carrier_full= {flight_data.carrier_full}
+//                 price= {flight_data.price}
+//                 carrier_img= {flight_data.carrier_img}
+//               />
+//             </TouchableHighlight>
+//           ))}
+//         </ScrollView>
+//       );
+//     } else {
+//       console.log("No Flight Found!")
+//       return <Text>No restaurant found</Text>;
+//     }
+//   }
+
+//   return (
+//     <View style={styles.container}>
+//       <View style={styles.searchArea}>
+//         <TextInput
+//           style={{ height: 25, fontSize: 20, flex: 5}}
+//           placeholder="Search"
+//           onChangeText={(text) => setSearchText(text)}
+//         />
+//         <TouchableHighlight onPress={_onPressSearch} underlayColor="white">
+//           <View style={[styles.searchButton,{flex: 1}]}>
+//             <Image style={{ height: 30, width: 30 }} source={require('./images/search_icon.png')} />
+//           </View>
+//         </TouchableHighlight>
+//       </View>
+//       <View style={styles.flightContainer}>
+//         {isSearch ? showSearchResult() : showDefault()}
+//       </View>
+//     </View>
+//   );
+// }
 
 // ADD Detailed for Detailed Screen here
 const DetailScreen: React.FC = () =>{
