@@ -297,14 +297,14 @@ const ListScreen: React.FC = () => {
   const [searchResult, setSearchResult] = useState<any[] | null>(null);
   const [isSearch, setIsSearch] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);  // To manage loading state
+  const today = format(new Date(), "dd/MM/yyyy");
 
-  // Fetch flight data from Firebase when the component mounts
   useEffect(() => {
     _readFlightDB();
-  }, []);  // Empty dependency array ensures it runs only once when the component mounts
+  }, []); 
 
   const _readFlightDB = () => {
-    setLoading(true);  // Set loading to true when starting the data fetch
+    setLoading(true);  
     get(flightRef)
       .then((flight_snapshot) => {
         if (flight_snapshot.exists()) {
@@ -318,7 +318,7 @@ const ListScreen: React.FC = () => {
         console.log(error);
       })
       .finally(() => {
-        setLoading(false);  // Set loading to false after data is fetched
+        setLoading(false); 
       });
   };
 
@@ -339,16 +339,14 @@ const ListScreen: React.FC = () => {
 
   const showToday = () => {
     console.log("Showing Today")
-    let today: Date = new Date();
-    const targetDate = format(new Date(), "dd/MM/yyyy");
-    console.log("TODAY:",targetDate);
+    console.log("TODAY:",today);
     if (!flightData) {
       return <Text>No flight data available</Text>;
     }
 
     const todayFlightData = flightData.filter((flight) => {
       console.log(flight.start_date)
-      return flight.start_date==targetDate
+      return flight.start_date==today
     });
     console.log("todayFlightData", todayFlightData);
 
@@ -469,180 +467,9 @@ const ListScreen: React.FC = () => {
   );
 };
 
-// const ListScreen: React.FC = () => {
-//   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Lists'>>();
-//   const [flightData, setFlightData] = useState<any[] | null>();
-//   const [searchText, setSearchText] = useState<string>('');
-//   const [searchResult, setSearchResult] = useState<any[] | null>(null);
-//   const [isSearch, setIsSearch] = useState<boolean>(false);
-//   const [loading, setLoading] = useState(true);  // To manage loading state
-
-  
-//   useEffect(() => {
-//     _readFlightDB();
-//   })
-
-//   // ADD usefull func
-//   const _readFlightDB = () => {
-//     get(flightRef)
-//       .then((flight_snapshot) => {
-//         if (flight_snapshot.exists()) {
-//           setFlightData(flight_snapshot.val());
-//           console.log("Flight from DB:",flight_snapshot.val());
-//         } else {
-//           console.log('No Flight Data in DB');
-//         }
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//       })
-//       .finally(() => {
-//         setLoading(false);  // Set loading to false once data is fetched
-//       });
-//   }
-
-//   const _onPressSearch = () => {
-//     if (flightData && searchText!='') {
-//       const flightFound = flightData.filter((flight) =>
-//         flight.ori_name.match(new RegExp(searchText, 'i'))
-//       );
-
-//       setSearchResult(flightFound);
-//       setIsSearch(true);
-//       console.log("Pressed Search: ", searchText)
-//       console.log("searchResult: ", searchResult)
-//     }
-//     else {
-//       console.log("No search text!")
-//       setIsSearch(false);
-//     }
-//   }
-
-//   const showDefault = () => {
-//     // _readFlightDB();
-//     const targetDate = "23/11/2024";
-//     // console.log("flightData",flightData);
-//     if (flightData) {
-//       const todayFlightData = flightData.filter(flight => flight.start_date === targetDate);
-//       console.log("todayFlightData",todayFlightData);
-//     }
-    
-//     return(
-//         <ScrollView style={{ flex: 1 }}>
-//           {todayFlightData?.map((flight_data, i) => (
-//             <TouchableHighlight key={i} onPress={() => {
-//               navigation.navigate('Details', {
-//                 flight_num : flight_data.flight_num,
-//                 ori_name : flight_data.ori_name,
-//                 ori_short : flight_data.ori_short,
-//                 start_date : flight_data.start_date,
-//                 start_time: flight_data.start_time,
-//                 dest_name : flight_data.dest_name,
-//                 dest_short : flight_data.dest_short,
-//                 arrive_date : flight_data.arrive_date,
-//                 arrive_time: flight_data.arrive_time,
-//                 carrier : flight_data.carrier,
-//                 carrier_full : flight_data.carrier_full,
-//                 price : flight_data.price,
-//                 carrier_img: flight_data.carrier_img,
-//               });
-//             }}>
-//               <Flight
-//                 key={flight_data.flight_num}
-//                 flight_num={flight_data.flight_num}
-//                 ori_name= {flight_data.ori_name}
-//                 ori_short= {flight_data.ori_short}
-//                 start_date= {flight_data.start_date}
-//                 start_time= {flight_data.start_time}
-//                 dest_name= {flight_data.dest_name}
-//                 dest_short= {flight_data.dest_short}
-//                 arrive_date= {flight_data.arrive_date}
-//                 arrive_time= {flight_data.arrive_time}
-//                 carrier= {flight_data.carrier}
-//                 carrier_full= {flight_data.carrier_full}
-//                 price= {flight_data.price}
-//                 carrier_img= {flight_data.carrier_img}
-//               />
-//             </TouchableHighlight>
-//           ))}
-//         </ScrollView>
-//     );
-//   }
-//   if (loading) {
-//     return <Text>Loading flights...</Text>;
-//   }
-//   const showSearchResult = () => {
-//     if (searchResult && searchResult.length > 0) {
-//       return (
-//         <ScrollView style={{ flex: 1 }}>
-//           {searchResult?.map((flight_data, i) => (
-//             <TouchableHighlight onPress={() => {
-//               navigation.navigate('Details', {
-
-//                 flight_num : flight_data.flight_num,
-//                 ori_name : flight_data.ori_name,
-//                 ori_short : flight_data.ori_short,
-//                 start_date : flight_data.start_date,
-//                 start_time: flight_data.start_time,
-//                 dest_name : flight_data.dest_name,
-//                 dest_short : flight_data.dest_short,
-//                 arrive_date : flight_data.arrive_date,
-//                 arrive_time: flight_data.arrive_time,
-//                 carrier : flight_data.carrier,
-//                 carrier_full : flight_data.carrier_full,
-//                 price : flight_data.price,
-//                 carrier_img: flight_data.carrier_img,
-//               });
-//             }}>
-//               <Flight
-//                 key={flight_data.flight_num}
-//                 flight_num={flight_data.flight_num}
-//                 ori_name= {flight_data.ori_name}
-//                 ori_short= {flight_data.ori_short}
-//                 start_date= {flight_data.start_date}
-//                 start_time= {flight_data.start_time}
-//                 dest_name= {flight_data.dest_name}
-//                 dest_short= {flight_data.dest_short}
-//                 arrive_date= {flight_data.arrive_date}
-//                 arrive_time= {flight_data.arrive_time}
-//                 carrier= {flight_data.carrier}
-//                 carrier_full= {flight_data.carrier_full}
-//                 price= {flight_data.price}
-//                 carrier_img= {flight_data.carrier_img}
-//               />
-//             </TouchableHighlight>
-//           ))}
-//         </ScrollView>
-//       );
-//     } else {
-//       console.log("No Flight Found!")
-//       return <Text>No restaurant found</Text>;
-//     }
-//   }
-
-//   return (
-//     <View style={styles.container}>
-//       <View style={styles.searchArea}>
-//         <TextInput
-//           style={{ height: 25, fontSize: 20, flex: 5}}
-//           placeholder="Search"
-//           onChangeText={(text) => setSearchText(text)}
-//         />
-//         <TouchableHighlight onPress={_onPressSearch} underlayColor="white">
-//           <View style={[styles.searchButton,{flex: 1}]}>
-//             <Image style={{ height: 30, width: 30 }} source={require('./images/search_icon.png')} />
-//           </View>
-//         </TouchableHighlight>
-//       </View>
-//       <View style={styles.flightContainer}>
-//         {isSearch ? showSearchResult() : showDefault()}
-//       </View>
-//     </View>
-//   );
-// }
-
 // ADD Detailed for Detailed Screen here
 const DetailScreen: React.FC = () =>{
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Lists'>>();
   const route = useRoute<RouteProp<RootStackParamList, 'Details'>>();
   const {flight_num,
     ori_name,
@@ -657,11 +484,37 @@ const DetailScreen: React.FC = () =>{
     carrier_full,
     price,
     carrier_img,} = route.params;
+  
+  const UserIDRef = ref(getDatabase(),"user/"+userID+"/flight/")
+
+  const handleButton = () => {
+    console.log("You are booking flight num:",flight_num)
+    console.log("For user ID", userID)
+    const newUserFlightRef = push(UserIDRef)
+    set(newUserFlightRef, {
+      "flight_num":flight_num,
+      "ori_name":ori_name,
+      "ori_short":ori_short,
+      "start_date":start_date,
+      "start_time":start_time,
+      "dest_name":dest_name,
+      "dest_short":dest_short,
+      "arrive_date":arrive_date,
+      "arrive_time":arrive_time,
+      "carrier":carrier,
+      "carrier_full":carrier_full,
+      "price":price,
+      "carrier_img":carrier_img
+    })
+    navigation.navigate("Lists")
+
+  }
 
   return (
     <View style={{flexDirection: "column",flex:1,justifyContent: 'flex-start',}}>
       <View style={{flex:3}}>
       <Text>This is Detail for {flight_num}</Text>
+      <Text>That have ori_name = {ori_name}</Text>
       <Text>That have ori_short = {ori_short}</Text>
       <Text>That have start_date = {start_date}</Text>
       <Text>That have start_time = {start_time}</Text>
@@ -675,6 +528,13 @@ const DetailScreen: React.FC = () =>{
       </View>
       <View style={{flex:5}}>
       <Image source={{uri : carrier_img}} style={{width:300,height:300}}/>
+      </View>
+      <View style = {{flex: 2}}>
+        <Button
+        onPress={handleButton}
+        title="Book this flight"
+        color="green"
+        />
       </View>
     </View>
   )
