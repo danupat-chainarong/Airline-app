@@ -5,6 +5,12 @@ This project is part of DES427-Mobile Dev App
 1. `cd ./app`
 2. `npm install`
 3. Create `.env` file into `app/` and request **API_KEY** from @gus
+4. Create `env.d.ts` file in `app/` and place this
+```
+declare module '@env' {
+    export const API_KEY: string, test: string;
+}
+```
 
 [Optional if it doesn't work]
 1. `npm install firebase react-native-dotenv @react-navigation/native @react-navigation/stack @egjs/hammerjs @react-navigation/bottom-tabs`
