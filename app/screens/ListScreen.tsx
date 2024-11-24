@@ -198,7 +198,7 @@ const ListScreen: React.FC = () => {
   
     // If the data is still loading, show a loading message
     if (loading) {
-        return <ActivityIndicator size="large" color="darkred" style={styles.loadingIndicator} />;
+        return <ActivityIndicator size="large" color="#00796b" style={styles.loadingIndicator} />;
     }
   
     return (

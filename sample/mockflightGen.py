@@ -17,8 +17,8 @@ CARRIERS = [
     ("AeroJet", "AERO", "https://companieslogo.com/img/orig/AJRD-67bc97dc.png?t=1720244490"),
     ("VivaJet", "VIVA", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT027QfI-XwewbsLZyLXM6iSI2KDJsU63HanA&s"),
     ("SkyConnect", "SKY", "https://i.pinimg.com/736x/39/92/29/39922922f332bfee009151b747876ae2.jpg"),
-    ("American Airlines", "AAL", "https://i.imgur.com/JhS3f.png"),
-    ("SunAir", "SUN", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJvg-Ny2SU_4hmCKH96Vvl-RLO_5mgjlETPA&s"),
+    ("American Airlines", "AAL", "https://seeklogo.com/images/A/american-airlines-logo-F44A055D11-seeklogo.com.png"),
+    ("SunAir", "SUN", "https://pngfre.com/wp-content/uploads/sun-png-from-pngfre-34.png"),
     ("Nok Airline", "Nok Air", "https://asiaairticket.com/wp-content/uploads/2017/08/Logo-Nokair.png")
 ]
 
