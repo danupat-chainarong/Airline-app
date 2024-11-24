@@ -29,9 +29,5 @@ app/.DS_Store
 *.pem
 
 # local env files
-app/.env*.local
 app/.env
 
-# typescript
-app/*.tsbuildinfo
-app/.env
