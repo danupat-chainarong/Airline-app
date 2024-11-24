@@ -34,15 +34,15 @@ export const Flight: React.FC<FlightProps> = ({
 }) => {
   return (
     <View style={styles.flight}>
-      <View style={{ flex: 3 }}>
+      <View style={{ flex: 5 }}>
         <Image source={{ uri: carrier_img }} style={styles.FlightLogo} />
       </View>
-      <View style={{ flex: 4 }}>
-        <Text style={{ fontSize: 20 }}>Flight Num: {flight_num}</Text>
+      <View style={{ flex: 9 }}>
+        <Text style={{ fontSize: 20 }}>Flight Num : {flight_num}</Text>
         <Text style={{ fontSize: 12 }}>From {ori_short} to {dest_short}</Text>
-        <Text style={{ fontSize: 12 }}>From {start_date} {start_time}</Text>
-        <Text style={{ fontSize: 12 }}>To {arrive_date} {arrive_time}</Text>
-        <Text style={{ fontSize: 15, color: "green" }}>Price: {price.toFixed(2)} Baths</Text>
+        <Text style={{ fontSize: 12 }}>Start Date : {start_date}, {start_time}</Text>
+        <Text style={{ fontSize: 12 }}>Arrive Date : {arrive_date}, {arrive_time}</Text>
+        <Text style={{ fontSize: 15, color: "#00796b" }}>Price : {price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ฿</Text>
       </View>
     </View>
   );
@@ -51,9 +51,17 @@ export const Flight: React.FC<FlightProps> = ({
 const styles = StyleSheet.create({
   flight: {
     flexDirection: 'row',
-    padding: 5,
+    padding: 10,
     margin: 5,
+    borderRadius: 15,
+    elevation: 5,
+    shadowColor: '#615757',
+    shadowOpacity: 0.95,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
     backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    
   },
   FlightLogo: {
     width: 100,

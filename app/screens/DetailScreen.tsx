@@ -37,41 +37,42 @@ const DetailScreen: React.FC = () => {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.card}>
-                <Text style={styles.title}>Flight Details</Text>
+                <Text style={styles.title}>Flight Detail</Text>
                 <View style={styles.detailRow}>
-                    <Text style={styles.label}>Flight Number:</Text>
+                    <Text style={styles.label}>Flight Number :</Text>
                     <Text style={styles.value}>{flight_num}</Text>
                 </View>
                 <View style={styles.detailRow}>
-                    <Text style={styles.label}>From:</Text>
+                    <Text style={styles.label}>From :</Text>
                     <Text style={styles.value}>{ori_name} ({ori_short})</Text>
                 </View>
                 <View style={styles.detailRow}>
-                    <Text style={styles.label}>Departure:</Text>
+                    <Text style={styles.label}>Departure Date :</Text>
                     <Text style={styles.value}>{start_date} at {start_time}</Text>
                 </View>
                 <View style={styles.detailRow}>
-                    <Text style={styles.label}>To:</Text>
+                    <Text style={styles.label}>To :</Text>
                     <Text style={styles.value}>{dest_name} ({dest_short})</Text>
                 </View>
                 <View style={styles.detailRow}>
-                    <Text style={styles.label}>Arrival:</Text>
+                    <Text style={styles.label}>Arrival Date :</Text>
                     <Text style={styles.value}>{arrive_date} at {arrive_time}</Text>
                 </View>
                 <View style={styles.detailRow}>
-                    <Text style={styles.label}>Carrier:</Text>
+                    <Text style={styles.label}>Carrier :</Text>
                     <Text style={styles.value}>{carrier_full} ({carrier})</Text>
                 </View>
                 <View style={styles.detailRow}>
-                    <Text style={styles.label}>Price:</Text>
-                    <Text style={styles.value}>{price.toFixed(2)} Baths</Text>
+                    <Text style={styles.label}>Price :</Text>
+                    <Text style={styles.value}>
+                        {price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ฿</Text>
                 </View>
             </View>
             <View style={styles.imageContainer}>
                 <Image source={{ uri: carrier_img }} style={styles.image} resizeMode="contain" />
             </View>
             <TouchableOpacity style={styles.button} onPress={handleButton}>
-                <Text style={styles.buttonText}>Book this Flight</Text>
+                <Text style={styles.buttonText}>Book This Flight</Text>
             </TouchableOpacity>
         </ScrollView>
     )
@@ -81,11 +82,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 15,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#e3fffc',
     },
     card: {
         backgroundColor: '#fff',
-        borderRadius: 10,
+        borderRadius: 15,
         padding: 15,
         elevation: 3,
         marginBottom: 20,
@@ -120,15 +121,15 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     button: {
-        backgroundColor: 'green',
-        borderRadius: 5,
-        paddingVertical: 15,
+        backgroundColor: '#00796b',
+        borderRadius: 10,
+        paddingVertical: 20,
         alignItems: 'center',
         marginTop: 10,
     },
     buttonText: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
     },
 });

@@ -14,9 +14,9 @@ CITIES = [
 
 CARRIERS = [
     ("EchoFlights", "ECHO", "https://static.wixstatic.com/media/2fc393_8b25b80491d94867a533cb4896a7d9ce~mv2.png"),
-    ("AeroJet", "AERO", "https://1000logos.net/wp-content/uploads/2020/09/Aerojet-Rocketdyne-Logo-1942.jpg"),
+    ("AeroJet", "AERO", "https://companieslogo.com/img/orig/AJRD-67bc97dc.png?t=1720244490"),
     ("VivaJet", "VIVA", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT027QfI-XwewbsLZyLXM6iSI2KDJsU63HanA&s"),
-    ("SkyConnect", "SKY", "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/15/b7/4d/15b74de6-0d2b-4378-5efc-4690aa1fbf0c/AppIcon-SkyConnect-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/1200x630wa.png"),
+    ("SkyConnect", "SKY", "https://i.pinimg.com/736x/39/92/29/39922922f332bfee009151b747876ae2.jpg"),
     ("American Airlines", "AAL", "https://i.imgur.com/JhS3f.png"),
     ("SunAir", "SUN", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJvg-Ny2SU_4hmCKH96Vvl-RLO_5mgjlETPA&s"),
     ("Nok Airline", "Nok Air", "https://asiaairticket.com/wp-content/uploads/2017/08/Logo-Nokair.png")

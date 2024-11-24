@@ -14,7 +14,7 @@ const BottomTabNavigator: React.FC = () => {
       screenOptions={{
         headerShown: false, // Hide the header for the tab navigator
         tabBarStyle: {
-          backgroundColor: 'darkred',
+          backgroundColor: '#00796b',
         },
         tabBarActiveTintColor: '#fff',
         tabBarInactiveTintColor: '#ccc',

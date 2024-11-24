@@ -204,21 +204,26 @@ const ListScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <ScrollView style={styles.searchCard}>
-                <Text style={styles.label}>Destination Name</Text>
+                <Text style={styles.label}>Destination City</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Enter destination"
+                    placeholder="Enter Destination City"
                     onChangeText={setSearchDestName}
                 />
-                <Text style={styles.label}>Origin Name</Text>
+                 <Text style={styles.blank}></Text>
+                <Text style={styles.label}>Origin City</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Enter origin"
+                    placeholder="Enter Origin City"
                     onChangeText={setSearchOriName}
                 />
+                <Text style={styles.blank}></Text>
+                <Text style={styles.label}>Departure Date</Text>
+                
+                
                 <View style={styles.datePriceContainer}>
                     <View style={styles.dateInputContainer}>
-                        <Text style={styles.label}>Day (dd)</Text>
+                        <Text style={styles.label}>Day (DD)</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="DD"
@@ -236,7 +241,7 @@ const ListScreen: React.FC = () => {
                         />
                     </View>
                     <View style={styles.dateInputContainer}>
-                        <Text style={styles.label}>Year (yyyy)</Text>
+                        <Text style={styles.label}>Year (YYYY)</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="YYYY"
@@ -245,6 +250,8 @@ const ListScreen: React.FC = () => {
                         />
                     </View>
                 </View>
+
+                <Text style={styles.blank}></Text>
                 <View style={styles.priceInputContainer}>
                     <View style={styles.priceInput}>
                         <Text style={styles.label}>Min Price</Text>
@@ -280,14 +287,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#e3fffc',
     },
     searchCard: {
-        maxHeight: '325',
+        maxHeight: '360',
         backgroundColor: '#ffffff',
-        borderRadius: 10,
-        padding: 15,
-        elevation: 3,
+        borderRadius: 15,
+        padding: 13,
+        elevation: 5,
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: 2 },
@@ -297,6 +304,11 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 14,
+        color: '#333',
+    },
+
+    blank: {
+        fontSize: 4,
         color: '#333',
     },
     input: {
@@ -323,7 +335,7 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     searchButton: {
-        backgroundColor: 'darkred',
+        backgroundColor: '#00796b',
         borderRadius: 5,
         paddingVertical: 10,
         alignItems: 'center',

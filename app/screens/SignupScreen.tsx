@@ -79,15 +79,15 @@ const SignupScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#e0f7fa', // Light blue background
     justifyContent: 'center',
     padding: 15,
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
     padding: 20,
-    elevation: 3,
+    elevation: 5,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
@@ -96,26 +96,26 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#00796b', // Darker blue-green color
     marginBottom: 20,
     textAlign: 'center',
   },
   input: {
-    height: 40,
-    borderColor: '#ccc',
+    height: 45,
+    borderColor: '#00796b', // Darker blue-green border
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
     marginBottom: 15,
   },
   signupButton: {
-    backgroundColor: 'darkred',
+    backgroundColor: '#00796b', // Dark blue-green for button
     borderRadius: 5,
- paddingVertical: 10,
+    paddingVertical: 10,
     alignItems: 'center',
   },
   signupButtonText: {
-    color: '#fff',
+    color: '#ffffff', // White text for button
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -126,9 +126,9 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontSize: 15,
-    color: "blue",
-    textAlign: 'center',
+    color: "#00796b", // Darker blue-green for login text
     marginTop: 10,
+    textAlign: 'center',
   },
 });
 

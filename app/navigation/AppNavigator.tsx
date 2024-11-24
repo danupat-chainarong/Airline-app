@@ -62,8 +62,8 @@ const AppNavigator: React.FC = () => {
           // options={{ headerShown: false }}
         /> 
         
-        <Stack.Screen name="Details" component={DetailScreen} options={{ title: 'Airline Details' }} />
-        <Stack.Screen name="UserFlightDetail" component={UserFlightDetail} options={{ title: 'Airline Details' }} />
+        <Stack.Screen name="Details" component={DetailScreen} options={{ title: 'Airline Detail' }} />
+        <Stack.Screen name="UserFlightDetail" component={UserFlightDetail} options={{ title: 'Airline Detail' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

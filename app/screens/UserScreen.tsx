@@ -40,7 +40,7 @@ const UserScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.welcomeText}>Welcome, {username}</Text>
-            <Text style={styles.subtitle}>Your Booked Flights</Text>
+            <Text style={styles.subtitle}>Your Flights List</Text>
                 <ScrollView style={styles.scrollContainer}>
                     {flightData && flightData.length > 0 ? (
                         flightData.map(([flightID, flight_data]) => (
@@ -93,13 +93,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 15,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#e0f7fa',
     },
     welcomeText: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 10,
+        color: '#00796b',
+        marginBottom: 5,
     },
     subtitle: {
         fontSize: 18,
