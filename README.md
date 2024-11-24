@@ -4,8 +4,8 @@ This project is part of DES427-Mobile Dev App
 ## Installation Guide
 1. `cd ./app`
 2. `npm install`
-3. Create `.env` file into `app/` and request **API_KEY** from @gus
-4. Create `env.d.ts` file in `app/` and place this
+3. Create `.env` file in `app/` and request **API_KEY** from @gus
+4. Create `env.d.ts` file in `app/` and paste this
 ```
 declare module '@env' {
     export const API_KEY: string, test: string;
