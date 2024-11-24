@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#e3fffc',
     },
     searchCard: {
-        maxHeight: '360',
+        maxHeight: '335',
         backgroundColor: '#ffffff',
         borderRadius: 15,
         padding: 13,
