@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     button: {
-        backgroundColor: 'red',
+        backgroundColor: 'darkred',
         borderRadius: 5,
         paddingVertical: 15,
         alignItems: 'center',
