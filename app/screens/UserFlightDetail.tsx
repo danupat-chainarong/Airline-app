@@ -1,37 +1,37 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, Button, StyleSheet,ScrollView,TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { push, set, ref } from 'firebase/database';
+import { push, set, ref, remove } from 'firebase/database';
 import { getDatabase } from 'firebase/database';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { userID } from './LoginScreen';
 
-const DetailScreen: React.FC = () => {
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Details'>>();
-    const route = useRoute<RouteProp<RootStackParamList, 'Details'>>();
-    const { flight_num, ori_name, ori_short, start_date, start_time, dest_name, dest_short, arrive_date, arrive_time, carrier, carrier_full, price, carrier_img } = route.params;
-
-    const UserIDRef = ref(getDatabase(), "user/" + userID + "/flight/")
+const UserFlightDetail: React.FC = () => {
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'UserFlightDetail'>>();
+    const route = useRoute<RouteProp<RootStackParamList, 'UserFlightDetail'>>();
+    const { flight_num,
+        ori_name,
+        ori_short,
+        start_date,
+        start_time,
+        dest_name,
+        dest_short,
+        arrive_date,
+        arrive_time,
+        carrier,
+        carrier_full,
+        price,
+        carrier_img,
+        flightID, } = route.params;
+    const FlighIDRef = ref(getDatabase(), "user/" + userID + "/flight/"+flightID)
 
     const handleButton = () => {
-        const newUserFlightRef = push(UserIDRef);
-        set(newUserFlightRef, {
-            flight_num,
-            ori_name,
-            ori_short,
-            start_date,
-            start_time,
-            dest_name,
-            dest_short,
-            arrive_date,
-            arrive_time,
-            carrier,
-            carrier_full,
-            price,
-            carrier_img
-        });
-        navigation.navigate("Home");
+        console.log("You are Canceling flight num:", flight_num)
+        console.log("For user ID", userID)
+        remove(FlighIDRef);
+        navigation.navigate("Home")
+
     }
 
     return (
@@ -71,7 +71,7 @@ const DetailScreen: React.FC = () => {
                 <Image source={{ uri: carrier_img }} style={styles.image} resizeMode="contain" />
             </View>
             <TouchableOpacity style={styles.button} onPress={handleButton}>
-                <Text style={styles.buttonText}>Book this Flight</Text>
+                <Text style={styles.buttonText}>Cancel this Flight</Text>
             </TouchableOpacity>
         </ScrollView>
     )
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     button: {
-        backgroundColor: 'green',
+        backgroundColor: 'red',
         borderRadius: 5,
         paddingVertical: 15,
         alignItems: 'center',
@@ -133,4 +133,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default DetailScreen;
+export default UserFlightDetail;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
-type FlightProps = {
+export type FlightProps = {
   flight_num: string;
   ori_name: string;
   ori_short: string;
@@ -17,7 +17,7 @@ type FlightProps = {
   carrier_img: string;
 };
 
-const Flight: React.FC<FlightProps> = ({
+export const Flight: React.FC<FlightProps> = ({
   flight_num,
   ori_name,
   ori_short,
